@@ -34,6 +34,8 @@ def parse(tokens, code=None):
             code.append(("if", token))
         elif token == "ifelse":
             code.append(("ifelse", token))
+        elif token == "for":
+            code.append(("for", token))
         else:
             code.append(("var", token))
     return code
@@ -71,6 +73,7 @@ class PS:
             # another keywords
             'if': self.core_if,
             'ifelse': self.core_ifelse,
+            'for': self.core_for,
 
             'def': self.define,
         }
@@ -222,6 +225,15 @@ class PS:
             code = parse(op2)
         self.execute(code)
 
+    def core_for(self):
+        self.stack.pop()
+        code = self.create_execute_array()
+        stop = self.stack.pop()
+        step = self.stack.pop()
+        start = self.stack.pop()
+        for _ in range(start, stop, step):
+            self.execute(code)
+
     def define(self):
         value = self.stack.pop()
         if value != "}":
@@ -239,9 +251,9 @@ class PS:
                     bars -= 1
                 elif op == "}":
                     bars += 1
-            name = self.stack.pop()
             code.reverse()
             code = parse(code)
+            name = self.stack.pop()
             self.words[name] = code
 
     def result(self):
@@ -252,6 +264,21 @@ class PS:
         else:
             return ""
 
+    def create_execute_array(self):
+        bars = 1
+        code = []
+        op = self.stack.pop()
+        while bars != 0:
+            code.append(op)
+            op = self.stack.pop()
+            if op == "{":
+                bars -= 1
+            elif op == "}":
+                bars += 1
+        code.reverse()
+        # print(code)
+        code = parse(code)
+        return code
 
 if __name__ == '__main__':
     import Errno
