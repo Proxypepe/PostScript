@@ -18,7 +18,12 @@ if __name__ == '__main__':
                 print(lang.stack)
             elif source == "vars":
                 print(lang.words)
-            ast = parse(source.split())
-            lang.execute(ast)
-            res = lang.result()
-            print(res)
+            elif source == "run":
+                file = input("Enter file path: ")
+                inter = Interpreter(file)
+                inter.parse_file()
+            else:
+                ast = parse(source.split())
+                lang.execute(ast)
+                res = lang.result()
+                print(res)
