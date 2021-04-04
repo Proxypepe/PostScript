@@ -7,7 +7,7 @@ def parse(tokens, code=None):
     op = ("add", "sub", "mul", "div", "mod", "neg")
     stack_op = ("dup", "clear", "pop", "roll", "exch")
     logic = ("eq", "gt", "ge", "ne", "lt", "le")
-    logical_op = ("not", "and", "xor")
+    logical_op = ("not", "and", "xor", "or")
     num = "int", "float"
     for token in tokens:
         if type(token) == int or token.isdigit():
@@ -28,14 +28,14 @@ def parse(tokens, code=None):
             code.append(("open", token))
         elif token == "}":
             code.append(("close", token))
-        elif token == "def":
-            code.append(("def", token))
         elif token == "if":
             code.append(("if", token))
         elif token == "ifelse":
             code.append(("ifelse", token))
         elif token == "for":
             code.append(("for", token))
+        elif token == "def":
+            code.append(("def", token))
         else:
             code.append(("var", token))
     return code
@@ -69,6 +69,11 @@ class PS:
             'ne': self.logic_ne,
             'lt': self.logic_lt,
             'le': self.logic_le,
+
+            'not': self.logic_not,
+            'and': self.logic_and,
+            'or': self.logic_or,
+            'xor': self.logic_xor,
 
             # another keywords
             'if': self.core_if,
@@ -184,6 +189,27 @@ class PS:
         left = self.stack.pop()
         right = self.stack.pop()
         self.stack.append(1) if left >= right else self.stack.append(0)
+
+    def logic_not(self):
+        op = self.stack.pop()
+        self.stack.append(int(not op) )
+
+    def logic_and(self):
+        op1 = self.stack.pop()
+        op2 = self.stack.pop()
+        self.stack.append(op1 & op2)
+
+    def logic_or(self):
+        op1 = self.stack.pop()
+        op2 = self.stack.pop()
+        self.stack.append(op1 | op2)
+
+    def logic_xor(self):
+        op1 = self.stack.pop()
+        op2 = self.stack.pop()
+        self.stack.append(op1 ^ op2)
+
+
 
     def core_if(self):
         self.stack.pop()
