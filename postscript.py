@@ -16,6 +16,8 @@ if __name__ == '__main__':
                 sys.exit()
             elif source == "stack":
                 print(lang.stack)
+            elif source == "vars":
+                print(lang.words)
             ast = parse(source.split())
             lang.execute(ast)
             res = lang.result()

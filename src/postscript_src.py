@@ -186,18 +186,12 @@ class PS:
         self.stack.append(1) if left >= right else self.stack.append(0)
 
     def core_if(self):
-        print(self.stack)
-        op1 = []
+        self.stack.pop()
+        code = self.create_execute_array()
+        print(code)
         tmp = self.stack.pop()
-        while tmp != "{":
-            if tmp != "}":
-                op1.append(tmp)
-            tmp = self.stack.pop()
-        tmp = self.stack.pop()
-        code = []
+        print(tmp)
         if tmp == 1:
-            op1.reverse()
-            code = parse(op1)
             self.execute(code)
 
     def core_ifelse(self):
@@ -240,19 +234,7 @@ class PS:
             name = self.stack.pop()
             self.words[name] = value
         elif value == "}":
-            # print(self.stack)
-            code = []
-            op = self.stack.pop()
-            bars = 1
-            while bars != 0:
-                code.append(op)
-                op = self.stack.pop()
-                if op == "{":
-                    bars -= 1
-                elif op == "}":
-                    bars += 1
-            code.reverse()
-            code = parse(code)
+            code = self.create_execute_array()
             name = self.stack.pop()
             self.words[name] = code
 
@@ -276,9 +258,9 @@ class PS:
             elif op == "}":
                 bars += 1
         code.reverse()
-        # print(code)
         code = parse(code)
         return code
+
 
 if __name__ == '__main__':
     import Errno
