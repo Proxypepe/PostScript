@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 import sys
 from src.postscript_src import PS, parse
 from src.interpreter import Interpreter
