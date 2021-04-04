@@ -18,8 +18,8 @@ class Interpreter:
                     code = parse(format_line)
                     # print(f"code {code}")
                     self.lang.execute(code)
-                    print(self.lang.stack)
+                    # print(self.lang.stack)
                 print(self.lang.result())
-                print(self.lang.words)
+                # print(self.lang.words)
         else:
             print("Error file name")

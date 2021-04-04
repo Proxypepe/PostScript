@@ -1,44 +1,5 @@
 from src import Errno
-
-
-def parse(tokens, code=None):
-    if code is None:
-        code = []
-    op = ("add", "sub", "mul", "div", "mod", "neg")
-    stack_op = ("dup", "clear", "pop", "roll", "exch")
-    logic = ("eq", "gt", "ge", "ne", "lt", "le")
-    logical_op = ("not", "and", "xor", "or")
-    num = "int", "float"
-    for token in tokens:
-        if type(token) == int or token.isdigit():
-            code.append((num[0], token))
-        elif token == '':
-            pass
-        elif token in op:
-            code.append(("op", token))
-        elif token in stack_op:
-            code.append(("stack_op", token))
-        elif token in logic:
-            code.append(("logic", token))
-        elif token in logical_op:
-            code.append(("logical_op", token))
-        elif token[0] == "/":
-            code.append(("var_creat", token[1:]))
-        elif token == "{":
-            code.append(("open", token))
-        elif token == "}":
-            code.append(("close", token))
-        elif token == "if":
-            code.append(("if", token))
-        elif token == "ifelse":
-            code.append(("ifelse", token))
-        elif token == "for":
-            code.append(("for", token))
-        elif token == "def":
-            code.append(("def", token))
-        else:
-            code.append(("var", token))
-    return code
+from src.parser import parse
 
 
 class PS:
@@ -79,6 +40,7 @@ class PS:
             'if': self.core_if,
             'ifelse': self.core_ifelse,
             'for': self.core_for,
+            'array': self.core_array,
 
             'def': self.define,
         }
@@ -93,7 +55,9 @@ class PS:
                 self.words[word] = None
                 self.stack.append(word)
             elif type_ == "var":
-                if type(self.words[word]) == list:
+                if self.words[word] is None:
+                    self.stack.append(word)
+                elif type(self.words[word]) == list:
                     self.execute(self.words[word])
                 else:
                     self.stack.append(self.words[word])
@@ -214,9 +178,7 @@ class PS:
     def core_if(self):
         self.stack.pop()
         code = self.create_execute_array()
-        print(code)
         tmp = self.stack.pop()
-        print(tmp)
         if tmp == 1:
             self.execute(code)
 
@@ -253,6 +215,9 @@ class PS:
         start = self.stack.pop()
         for _ in range(start, stop, step):
             self.execute(code)
+
+    def core_array(self):
+        pass
 
     def define(self):
         value = self.stack.pop()
