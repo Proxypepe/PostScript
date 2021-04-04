@@ -1,6 +1,10 @@
 import sys
+import threading
+import os
 from src.postscript_src import PS, parse
 from src.interpreter import Interpreter
+
+
 
 lang = PS()
 
@@ -19,6 +23,14 @@ if __name__ == '__main__':
             elif source == "vars":
                 print(lang.words)
             elif source == "run":
+                file = input("Enter file path: ")
+                inter = Interpreter(file)
+                inter.parse_file()
+            elif source == "draw":
+                my_thread = threading.Thread(target=lang.draw)
+                my_thread.start()
+            elif source == "draw run":
+                lang.draw()
                 file = input("Enter file path: ")
                 inter = Interpreter(file)
                 inter.parse_file()

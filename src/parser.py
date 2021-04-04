@@ -7,6 +7,7 @@ def parse(tokens, code=None):
     logic = ("eq", "gt", "ge", "ne", "lt", "le")
     logical_op = ("not", "and", "xor", "or")
     basic_keywords = ("if", "ifelse", "for", "array", "def")
+    draw = ("moveto", "lineto")
     num = "int", "float"
     for token in tokens:
         if type(token) == int or token.isdigit():
@@ -23,6 +24,8 @@ def parse(tokens, code=None):
             code.append(("basic_keywords", token))
         elif token in logical_op:
             code.append(("logical_op", token))
+        elif token in draw:
+            code.append(("draw", token))
         elif token[0] == "/":
             code.append(("var_creat", token[1:]))
         elif token == "{":

@@ -1,10 +1,11 @@
+import tkinter as tk
 from src import Errno
 from src.parser import parse
 
 
 class PS:
     def __init__(self):
-
+        self.canvas = None
         self.stack = []
         self.bars = 0
         self.words = {
@@ -45,6 +46,11 @@ class PS:
             'def': self.define,
         }
 
+        self.draw_words = {
+            'moveto': self.draw_moveto,
+            'lineto': self.draw_lineto
+        }
+
     @Errno.VarTrace
     @Errno.IndexTrace
     def execute(self, code):
@@ -69,6 +75,8 @@ class PS:
                 self.stack.append(word)
             elif word in self.words and self.bars == 0:
                 self.words[word]()
+            elif self.canvas is not None and word in self.draw_words:
+                self.draw_words[word]()
             else:
                 self.stack.append(word)
 
@@ -252,6 +260,28 @@ class PS:
         code = parse(code)
         return code
 
+    def draw(self):
+        self.canvas = tk.Canvas(width=595, height=842)
+        self.canvas.pack()
+
+        tk.mainloop()
+
+    def draw_moveto(self):
+        y = self.stack.pop()
+        x = self.stack.pop()
+        self.canvas.create_line(x, y, x, y)
+        self.canvas.update()
+        self.stack.append(x)
+        self.stack.append(y)
+
+    def draw_lineto(self):
+        y = self.stack.pop()
+        x = self.stack.pop()
+        y1 = self.stack.pop()
+        x1 = self.stack.pop()
+        self.canvas.create_line(x, y, x1, y1)
+        self.canvas.update()
+
 
 if __name__ == '__main__':
     import Errno
@@ -261,3 +291,5 @@ if __name__ == '__main__':
     print(ast)
     ps.execute(ast)
     print(ps.stack)
+
+
