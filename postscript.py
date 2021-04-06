@@ -1,6 +1,5 @@
 import sys
 import threading
-import os
 from src.postscript_src import PS, parse
 from src.interpreter import Interpreter
 
@@ -11,9 +10,11 @@ lang = PS()
 if __name__ == '__main__':
     if sys.argv[1:]:
         inter = Interpreter(sys.argv[1])
-        inter.parse_file()
-
+        code = inter.parse_file()
+        lang.execute(code)
+        print(lang.stack)
     else:
+        my_thread = None
         while True:
             source = input(">> ")
             if source == "exit()" or source == "quit()":
@@ -25,15 +26,18 @@ if __name__ == '__main__':
             elif source == "run":
                 file = input("Enter file path: ")
                 inter = Interpreter(file)
-                inter.parse_file()
+                code = inter.parse_file()
+                lang.execute(code)
             elif source == "draw":
                 my_thread = threading.Thread(target=lang.draw)
                 my_thread.start()
             elif source == "draw run":
-                lang.draw()
                 file = input("Enter file path: ")
+                my_thread = threading.Thread(target=lang.draw)
+                my_thread.start()
                 inter = Interpreter(file)
-                inter.parse_file()
+                code = inter.parse_file()
+                lang.execute(code)
             else:
                 ast = parse(source.split())
                 lang.execute(ast)
