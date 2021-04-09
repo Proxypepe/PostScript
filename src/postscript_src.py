@@ -1,6 +1,6 @@
 import tkinter as tk
 from src import Errno
-from src.parser import parse
+from src.parser import Lexer
 
 
 class PS:
@@ -8,6 +8,7 @@ class PS:
         self.canvas = None
         self.stack = []
         self.bars = 0
+        self.lexer = Lexer()
         self.words = {
             # arithmetic
             'add': self.op_add,
@@ -164,7 +165,7 @@ class PS:
 
     def logic_not(self):
         op = self.stack.pop()
-        self.stack.append(int(not op) )
+        self.stack.append(int(not op))
 
     def logic_and(self):
         op1 = self.stack.pop()
@@ -209,10 +210,10 @@ class PS:
         code = []
         if tmp == 1:
             op1.reverse()
-            code = parse(op1)
+            code = self.lexer.parse(op1)
         elif tmp == 0:
             op2.reverse()
-            code = parse(op2)
+            code = self.lexer.parse(op2)
         self.execute(code)
 
     def core_for(self):
@@ -257,7 +258,7 @@ class PS:
             elif op == "}":
                 bars += 1
         code.reverse()
-        code = parse(code)
+        code = self.lexer.parse(code)
         return code
 
     def draw(self):

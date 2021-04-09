@@ -1,4 +1,5 @@
-from src.postscript_src import PS, parse
+from src.postscript_src import PS
+from src.parser import Lexer
 import os.path
 
 
@@ -16,7 +17,8 @@ class Interpreter:
                     tmp = format_line.pop()
                     format_line.append(tmp[:-1]) if "\n" in tmp else format_line.append(tmp)
                     # print(f"line {format_line}")
-                    code += parse(format_line)
+                    lexer = Lexer()
+                    code += lexer.parse(format_line)
                     # print(f"code {code}")
                     # print(self.lang.stack)
                 # print(self.lang.result())
