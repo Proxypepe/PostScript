@@ -6,7 +6,8 @@ class Lexer:
         self.logical_op = ("not", "and", "xor", "or")
         self.basic_keywords = ("if", "ifelse", "for", "array", "def")
         self.draw = ("moveto", "lineto")
-        self.num = "int", "float"
+        self.num = ("int", "float")
+        self.ex = "executable_array"
 
     def parse(self, tokens, code=None):
         if code is None:
