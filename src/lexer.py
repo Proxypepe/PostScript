@@ -1,3 +1,6 @@
+import src.Errno as errno
+
+
 class Lexer:
     def __init__(self):
         self.op = ("add", "sub", "mul", "div", "mod", "neg")
@@ -9,10 +12,12 @@ class Lexer:
         self.num = ("int", "float")
         self.ex = "executable_array"
 
+        self.bars = []
+
     def parse(self, tokens, code=None):
         if code is None:
             code = []
-        for token in tokens:
+        for i, token in enumerate(tokens):
             if type(token) == int or token.isdigit():
                 code.append((self.num[0], token))
             elif token == '':
@@ -30,11 +35,18 @@ class Lexer:
             elif token in self.draw:
                 code.append(("draw", token))
             elif token[0] == "/":
-                code.append(("var_creat", token[1:]))
+                code.append(("var_create", token[1:]))
             elif token == "{":
                 code.append(("open", token))
+                self.bars.append("{")
             elif token == "}":
                 code.append(("close", token))
+                if self.bars:
+                    self.bars.pop()
+                else:
+                    raise errno.InvalidBars(i)
             else:
                 code.append(("var", token))
+        if self.bars:
+            raise errno.InvalidBars(0)
         return code

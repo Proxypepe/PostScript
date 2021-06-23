@@ -1,5 +1,5 @@
 from src.postscript_src import PS
-from src.parser import Lexer
+from src.lexer import Lexer
 import os.path
 
 

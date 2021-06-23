@@ -1,7 +1,7 @@
 import sys
 import threading
 from src.postscript_src import PS
-from src.parser import Lexer
+from src.lexer import Lexer
 from src.interpreter import Interpreter
 
 lang = PS()
@@ -11,7 +11,7 @@ if __name__ == '__main__':
         inter = Interpreter(sys.argv[1])
         code = inter.parse_file()
         lang.execute(code)
-        print(lang.stack)
+
     else:
         my_thread = None
         while True:
@@ -40,6 +40,7 @@ if __name__ == '__main__':
             else:
                 lexer = Lexer()
                 ast = lexer.parse(source.split())
+                print("parsed: ", ast)
                 lang.execute(ast)
                 res = lang.result()
                 print(res)

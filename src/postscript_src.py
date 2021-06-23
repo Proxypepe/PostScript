@@ -1,11 +1,9 @@
-import tkinter as tk
 from src import Errno
-from src.parser import Lexer
+from src.lexer import Lexer
 
 
 class PS:
     def __init__(self):
-        self.canvas = None
         self.stack = []
         self.bars = 0
         self.lexer = Lexer()
@@ -38,7 +36,7 @@ class PS:
             'or': self.logic_or,
             'xor': self.logic_xor,
 
-            # another keywords
+            # Built-in keywords
             'if': self.core_if,
             'ifelse': self.core_ifelse,
             'for': self.core_for,
@@ -58,7 +56,7 @@ class PS:
         for type_, word in code:
             if type_ == "int":
                 self.stack.append(int(word))
-            elif type_ == "var_creat":
+            elif type_ == "var_create":
                 self.words[word] = None
                 self.stack.append(word)
             elif type_ == "var":
@@ -76,8 +74,6 @@ class PS:
                 self.stack.append(word)
             elif word in self.words and self.bars == 0:
                 self.words[word]()
-            elif self.canvas is not None and word in self.draw_words:
-                self.draw_words[word]()
             else:
                 self.stack.append(word)
 
@@ -241,7 +237,6 @@ class PS:
     def result(self):
         if len(self.stack) != 0:
             res = self.stack[-1]
-            self.stack.clear()
             return res
         else:
             return ""
@@ -262,33 +257,23 @@ class PS:
         return code
 
     def draw(self):
-        self.canvas = tk.Canvas(width=595, height=842)
-        self.canvas.pack()
-
-        tk.mainloop()
+        pass
 
     def draw_moveto(self):
-        y = self.stack.pop()
-        x = self.stack.pop()
-        self.canvas.create_line(x, y, x, y)
-        self.canvas.update()
-        self.stack.append(x)
-        self.stack.append(y)
+        # TODO lift the pen and move to a point
+        pass
 
     def draw_lineto(self):
-        y = self.stack.pop()
-        x = self.stack.pop()
-        y1 = self.stack.pop()
-        x1 = self.stack.pop()
-        self.canvas.create_line(x, y, x1, y1)
-        self.canvas.update()
+        # TODO lower the pen and move to a point
+        pass
 
 
 if __name__ == '__main__':
     import Errno
     source = '5 dup 1 add 2 div mul'
     ps = PS()
-    ast = parse(source.split())
+    l = Lexer()
+    ast = l.parse(source.split())
     print(ast)
     ps.execute(ast)
     print(ps.stack)
