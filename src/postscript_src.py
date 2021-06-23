@@ -56,6 +56,8 @@ class PS:
         for type_, word in code:
             if type_ == "int":
                 self.stack.append(int(word))
+            elif type_ == "float":
+                self.stack.append(float(word))
             elif type_ == "var_create":
                 self.words[word] = None
                 self.stack.append(word)

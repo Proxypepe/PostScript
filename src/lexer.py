@@ -9,17 +9,27 @@ class Lexer:
         self.logical_op = ("not", "and", "xor", "or")
         self.basic_keywords = ("if", "ifelse", "for", "array", "def")
         self.draw = ("moveto", "lineto")
-        self.num = ("int", "float")
+        self.data_types = ("int", "float")
         self.ex = "executable_array"
 
         self.bars = []
+
+    def __identify_type(self, token: str) -> str:
+        if token.isdigit():
+            return "int"
+        elif len(token.split('.')) == 2:
+            return "float"
+        elif '"' in token:
+            return "str"
+        return "Unknown type"
 
     def parse(self, tokens, code=None):
         if code is None:
             code = []
         for i, token in enumerate(tokens):
-            if type(token) == int or token.isdigit():
-                code.append((self.num[0], token))
+            if self.__identify_type(token) in self.data_types:
+                data_type = self.__identify_type(token)
+                code.append((data_type, token))
             elif token == '':
                 pass
             elif token in self.op:
@@ -35,6 +45,7 @@ class Lexer:
             elif token in self.draw:
                 code.append(("draw", token))
             elif token[0] == "/":
+                # TODO check keywords
                 code.append(("var_create", token[1:]))
             elif token == "{":
                 code.append(("open", token))
