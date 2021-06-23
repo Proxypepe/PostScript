@@ -42,5 +42,3 @@ if __name__ == '__main__':
                 ast = lexer.parse(source.split())
                 print("parsed: ", ast)
                 lang.execute(ast)
-                res = lang.result()
-                print(res)

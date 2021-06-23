@@ -11,11 +11,18 @@ class Lexer:
         self.draw = ("moveto", "lineto")
         self.data_types = ("int", "float")
         self.ex = "executable_array"
+        self.bars_enum = ('{', '}')
 
         self.bars = []
 
-    def __identify_type(self, token: str) -> str:
-        if token.isdigit():
+        self.is_array = False
+
+    def identify_type(self, token) -> str:
+        if type(token) == int:
+            return "int"
+        elif type(token) == float:
+            return "float"
+        elif token.isdigit():
             return "int"
         elif len(token.split('.')) == 2:
             return "float"
@@ -27,8 +34,8 @@ class Lexer:
         if code is None:
             code = []
         for i, token in enumerate(tokens):
-            if self.__identify_type(token) in self.data_types:
-                data_type = self.__identify_type(token)
+            if self.identify_type(token) in self.data_types:
+                data_type = self.identify_type(token)
                 code.append((data_type, token))
             elif token == '':
                 pass
@@ -39,6 +46,8 @@ class Lexer:
             elif token in self.logic:
                 code.append(("logic", token))
             elif token in self.basic_keywords:
+                if token == "def":
+                    self.is_array = False
                 code.append(("basic_keywords", token))
             elif token in self.logical_op:
                 code.append(("logical_op", token))
@@ -46,6 +55,7 @@ class Lexer:
                 code.append(("draw", token))
             elif token[0] == "/":
                 # TODO check keywords
+                self.is_array = True
                 code.append(("var_create", token[1:]))
             elif token == "{":
                 code.append(("open", token))
@@ -56,6 +66,10 @@ class Lexer:
                     self.bars.pop()
                 else:
                     raise errno.InvalidBars(i)
+            elif token == "[" and self.is_array:
+                code.append(("open_array", token))
+            elif token == "]" and self.is_array:
+                code.append(("close_array", token))
             else:
                 code.append(("var", token))
         if self.bars:

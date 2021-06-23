@@ -228,13 +228,17 @@ class PS:
 
     def define(self):
         value = self.stack.pop()
-        if value != "}":
+        if value != "}" and value != "]":
             name = self.stack.pop()
             self.words[name] = value
         elif value == "}":
             code = self.create_execute_array()
             name = self.stack.pop()
             self.words[name] = code
+        elif value == "]":
+            array = self.create_array()
+            name = self.stack.pop()
+            self.words[name] = array
 
     def result(self):
         if len(self.stack) != 0:
@@ -257,6 +261,15 @@ class PS:
         code.reverse()
         code = self.lexer.parse(code)
         return code
+
+    def create_array(self):
+        token = self.stack.pop()
+        array = []
+        while token != '[':
+            _type = self.lexer.identify_type(token)
+            array.append((_type, token))
+            token = self.stack.pop()
+        return array
 
     def draw(self):
         pass
