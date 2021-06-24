@@ -1,28 +1,42 @@
-def IndexTrace(func):
+import sys
+
+
+def ErrorTrace(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except IndexError:
-            return "Invalid syntax"
-    return wrapper
-
-
-def VarTrace(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
+            print("Invalid syntax")
+            sys.exit()
         except KeyError:
-            return "Invalid var"
+            print("Invalid var")
+            sys.exit()
+        except InvalidBars:
+            print(InvalidBars())
+            sys.exit()
     return wrapper
 
 
 class InvalidBars(Exception):
     """Invalid number of braces
     """
-    def __init__(self, index=0):
-        self.index_of_error = index
-
     def __str__(self):
-        if self.index_of_error == 0:
-            return f"Invalid number of braces"
-        return f"Invalid number of braces {self.index_of_error}"
+        return """Invalid number of braces"""
+
+    def __repr__(self):
+        return """Invalid number of braces"""
+
+
+class InvalidIndex(Exception):
+    """
+
+    """
+    pass
+
+
+class OutOfRange(Exception):
+    pass
+
+
+class UnknownVariable(Exception):
+    pass

@@ -43,6 +43,7 @@ class PS:
             'array': self.core_array,
 
             'def': self.define,
+            'access_op': self.access_op,
         }
 
         self.draw_words = {
@@ -50,8 +51,7 @@ class PS:
             'lineto': self.draw_lineto
         }
 
-    @Errno.VarTrace
-    @Errno.IndexTrace
+    @Errno.ErrorTrace
     def execute(self, code):
         for type_, word in code:
             if type_ == "int":
@@ -61,6 +61,11 @@ class PS:
             elif type_ == "var_create":
                 self.words[word] = None
                 self.stack.append(word)
+            elif type_ == "array":
+                self.stack.append(word)
+            elif type_ == "access_op":
+                self.stack.append(word)
+                self.access_op()
             elif type_ == "var":
                 if self.words[word] is None:
                     self.stack.append(word)
@@ -238,7 +243,21 @@ class PS:
         elif value == "]":
             array = self.create_array()
             name = self.stack.pop()
+            array.reverse()
             self.words[name] = array
+
+    def access_op(self):
+        index = self.stack.pop()
+        index = index[1:-1]
+        if not index.isdigit():
+            raise Errno.InvalidIndex()
+        index = int(index)
+        var = self.stack.pop()
+        if var not in self.words:
+            raise Errno.UnknownVariable()
+        if index > len(self.words[var]):
+            raise Errno.InvalidIndex()
+        self.stack.append(self.words[var][index][1])
 
     def result(self):
         if len(self.stack) != 0:

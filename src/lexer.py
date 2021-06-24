@@ -1,4 +1,4 @@
-import src.Errno as errno
+from src import Errno
 
 
 class Lexer:
@@ -65,13 +65,17 @@ class Lexer:
                 if self.bars:
                     self.bars.pop()
                 else:
-                    raise errno.InvalidBars(i)
+                    raise Errno.InvalidBars()
             elif token == "[" and self.is_array:
                 code.append(("open_array", token))
             elif token == "]" and self.is_array:
                 code.append(("close_array", token))
+            elif "[" in token and token[-1] == "]":
+                open_b = token.find('[')
+                code.append(("array", token[:open_b]))
+                code.append(("access_op", token[open_b:]))
             else:
                 code.append(("var", token))
         if self.bars:
-            raise errno.InvalidBars(0)
+            raise Errno.InvalidBars(0)
         return code
