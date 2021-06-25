@@ -11,47 +11,45 @@ def ErrorTrace(func):
         except KeyError:
             print("Invalid var")
             sys.exit()
-        except PSExceptionStream:
-            print(PSExceptionStream())
+        except PSExceptionStream as e:
+            print(e)
             sys.exit()
     return wrapper
 
 
 class PSExceptionStream(Exception):
     """PS Base Exception class """
-    def __init__(self, msg=None):
-        pass
+    def __init__(self, message=None):
+        self.message = message
 
     def __str__(self):
-        return """Base Exception class in PS"""
+        if self.message:
+            return self.message
+        return self.__class__.__name__
 
     def __repr__(self):
-        return """Base Exception class in PS"""
+        if self.message:
+            return self.message
+        return self.__class__.__name__
 
 
 class InvalidBars(PSExceptionStream):
-    """Invalid number of braces
-    """
-    def __init__(self):
-        pass
-
-    def __str__(self):
-        return """Invalid number of braces"""
-
-    def __repr__(self):
-        return """Invalid number of braces"""
+    """Invalid number of braces"""
+    def __init__(self, message=None):
+        super(InvalidBars, self).__init__(message)
 
 
 class InvalidIndex(PSExceptionStream):
-    """
-
-    """
-    pass
+    """   """
+    def __init__(self, message=None):
+        super(InvalidIndex, self).__init__(message)
 
 
 class OutOfRange(PSExceptionStream):
-    pass
+    def __init__(self, message=None):
+        super(OutOfRange, self).__init__(message)
 
 
 class UnknownVariable(PSExceptionStream):
-    pass
+    def __init__(self, message=None):
+        super(UnknownVariable, self).__init__(message)

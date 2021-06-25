@@ -93,7 +93,7 @@ class Lexer:
                 if self.bars:
                     self.bars.pop()
                 else:
-                    raise Errno.InvalidBars()
+                    raise Errno.InvalidBars
             elif token == "[" and self.is_array:
                 self.sq_bars.append('[')
                 code.append(("open_array", token))
@@ -107,5 +107,5 @@ class Lexer:
             else:
                 code.append(("var", token))
         if self.bars or self.sq_bars:
-            raise Errno.InvalidBars(0)
+            raise Errno.InvalidBars
         return code
