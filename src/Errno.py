@@ -11,15 +11,30 @@ def ErrorTrace(func):
         except KeyError:
             print("Invalid var")
             sys.exit()
-        except InvalidBars:
-            print(InvalidBars())
+        except PSExceptionStream:
+            print(PSExceptionStream())
             sys.exit()
     return wrapper
 
 
-class InvalidBars(Exception):
+class PSExceptionStream(Exception):
+    """PS Base Exception class """
+    def __init__(self, msg=None):
+        pass
+
+    def __str__(self):
+        return """Base Exception class in PS"""
+
+    def __repr__(self):
+        return """Base Exception class in PS"""
+
+
+class InvalidBars(PSExceptionStream):
     """Invalid number of braces
     """
+    def __init__(self):
+        pass
+
     def __str__(self):
         return """Invalid number of braces"""
 
@@ -27,16 +42,16 @@ class InvalidBars(Exception):
         return """Invalid number of braces"""
 
 
-class InvalidIndex(Exception):
+class InvalidIndex(PSExceptionStream):
     """
 
     """
     pass
 
 
-class OutOfRange(Exception):
+class OutOfRange(PSExceptionStream):
     pass
 
 
-class UnknownVariable(Exception):
+class UnknownVariable(PSExceptionStream):
     pass

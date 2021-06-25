@@ -1,8 +1,15 @@
+from typing import Union, List, Tuple
 from src import Errno
 
 
 class Lexer:
+    """
+    Lexer Class -
+    Parses the code into tokens, then classifies them
+    """
+
     def __init__(self):
+        # Built-in keywords
         self.op = ("add", "sub", "mul", "div", "mod", "neg")
         self.stack_op = ("dup", "clear", "pop", "roll", "exch")
         self.logic = ("eq", "gt", "ge", "ne", "lt", "le")
@@ -13,11 +20,23 @@ class Lexer:
         self.ex = "executable_array"
         self.bars_enum = ('{', '}')
 
+        # stacks for checking bars
         self.bars = []
+        self.sq_bars = []
 
+        # support vars
         self.is_array = False
+        self.is_comment = False
 
-    def identify_type(self, token) -> str:
+
+    def identify_type(self, token: Union[int, float, str]) -> str:
+        """
+        Classifies the input token and returns the data type in string format
+
+        :param token: Union[int, float, str]
+        :return: str -
+        Returns datatype
+        """
         if type(token) == int:
             return "int"
         elif type(token) == float:
@@ -30,7 +49,8 @@ class Lexer:
             return "str"
         return "Unknown type"
 
-    def parse(self, tokens, code=None):
+    @Errno.ErrorTrace
+    def parse(self, tokens, code=None) -> list[tuple]:
         if code is None:
             code = []
         for i, token in enumerate(tokens):
@@ -39,6 +59,15 @@ class Lexer:
                 code.append((data_type, token))
             elif token == '':
                 pass
+            elif token == "/*":
+                self.is_comment = True
+                # code.append(("comment", token))
+            elif token == "*/":
+                self.is_comment = False
+                # code.append(("comment", token))
+            elif self.is_comment:
+                pass
+                # code.append(("comment", token))
             elif token in self.op:
                 code.append(("op", token))
             elif token in self.stack_op:
@@ -54,7 +83,6 @@ class Lexer:
             elif token in self.draw:
                 code.append(("draw", token))
             elif token[0] == "/":
-                # TODO check keywords
                 self.is_array = True
                 code.append(("var_create", token[1:]))
             elif token == "{":
@@ -67,8 +95,10 @@ class Lexer:
                 else:
                     raise Errno.InvalidBars()
             elif token == "[" and self.is_array:
+                self.sq_bars.append('[')
                 code.append(("open_array", token))
             elif token == "]" and self.is_array:
+                self.sq_bars.pop()
                 code.append(("close_array", token))
             elif "[" in token and token[-1] == "]":
                 open_b = token.find('[')
@@ -76,6 +106,6 @@ class Lexer:
                 code.append(("access_op", token[open_b:]))
             else:
                 code.append(("var", token))
-        if self.bars:
+        if self.bars or self.sq_bars:
             raise Errno.InvalidBars(0)
         return code

@@ -16,6 +16,7 @@ class PS:
             'mod': self.op_mod,
             'neg': self.op_neg,
 
+
             # stack
             'dup': self.stack_dup,
             'clear': self.stack_clear,
@@ -58,6 +59,8 @@ class PS:
                 self.stack.append(int(word))
             elif type_ == "float":
                 self.stack.append(float(word))
+            # elif type_ == "comment":
+            #     pass
             elif type_ == "var_create":
                 self.words[word] = None
                 self.stack.append(word)
