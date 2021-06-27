@@ -4,6 +4,7 @@ from src.lexer import Lexer
 
 
 class PS:
+    """Main language class"""
     def __init__(self):
         self.stack = []
         self.bars = 0
@@ -60,7 +61,13 @@ class PS:
         self.drawing_window = None
 
     @Errno.ErrorTrace
-    def execute(self, code):
+    def execute(self, code: list[tuple]) -> None:
+        """The code consists of a list of 2d tuples, where the first element is the token type,
+           the second element is a token.\n
+           Each type is handled differently.
+           :param code: list[tuple] - code to execute
+           :return: None
+        """
         for type_, word in code:
             if type_ == "int":
                 self.stack.append(int(word))
@@ -69,16 +76,20 @@ class PS:
             # elif type_ == "comment":
             #     pass
             elif type_ == "var_create":
+                # Init new variable and add it to global vision
                 self.words[word] = None
                 self.stack.append(word)
             elif type_ == "array":
                 self.stack.append(word)
             elif type_ == "access_op":
+                # [] operator implementation
                 self.stack.append(word)
                 self.access_op()
             elif type_ == "draw" and self.pen is not None:
+                # execute drawing part
                 self.draw_words[word]()
             elif type_ == "var":
+                # work with variables and functions
                 if self.words[word] is None:
                     self.stack.append(word)
                 elif type(self.words[word]) == list:
@@ -109,7 +120,7 @@ class PS:
     def op_sub(self):
         _operand1 = self.stack.pop()
         _operand2 = self.stack.pop()
-        _result = _operand1 - _operand2
+        _result = _operand2 - _operand1
         self.stack.append(_result)
 
     def op_mul(self):
