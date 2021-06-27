@@ -16,13 +16,8 @@ class Interpreter:
                     format_line = line.split(" ")
                     tmp = format_line.pop()
                     format_line.append(tmp[:-1]) if "\n" in tmp else format_line.append(tmp)
-                    # print(f"line {format_line}")
                     lexer = Lexer()
                     code += lexer.parse(format_line)
-                    # print(f"code {code}")
-                    # print(self.lang.stack)
-                # print(self.lang.result())
-                # print(self.lang.words)
             return code
         else:
             print("Error file name")

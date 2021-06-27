@@ -8,10 +8,12 @@ lang = PS()
 
 if __name__ == '__main__':
     if sys.argv[1:]:
+        my_thread = threading.Thread(target=lang.draw)
+        my_thread.start()
         inter = Interpreter(sys.argv[1])
         code = inter.parse_file()
         lang.execute(code)
-
+        lang.end_drawing()
     else:
         my_thread = None
         while True:
@@ -27,16 +29,16 @@ if __name__ == '__main__':
                 inter = Interpreter(file)
                 code = inter.parse_file()
                 lang.execute(code)
-            elif source == "draw":
-                my_thread = threading.Thread(target=lang.draw)
-                my_thread.start()
             elif source == "draw run":
                 file = input("Enter file path: ")
                 my_thread = threading.Thread(target=lang.draw)
                 my_thread.start()
+                lang.start_drawing()
                 inter = Interpreter(file)
                 code = inter.parse_file()
+                print(code)
                 lang.execute(code)
+                lang.end_drawing()
             else:
                 lexer = Lexer()
                 ast = lexer.parse(source.split())

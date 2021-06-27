@@ -53,3 +53,8 @@ class OutOfRange(PSExceptionStream):
 class UnknownVariable(PSExceptionStream):
     def __init__(self, message=None):
         super(UnknownVariable, self).__init__(message)
+
+
+class InvalidFuncArgs(PSExceptionStream):
+    def __init__(self, message=None):
+        super(InvalidFuncArgs, self).__init__(message)

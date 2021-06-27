@@ -1,4 +1,4 @@
-from typing import Union, List, Tuple
+from typing import Union
 from src import Errno
 
 
@@ -14,7 +14,7 @@ class Lexer:
         self.stack_op = ("dup", "clear", "pop", "roll", "exch")
         self.logic = ("eq", "gt", "ge", "ne", "lt", "le")
         self.logical_op = ("not", "and", "xor", "or")
-        self.basic_keywords = ("if", "ifelse", "for", "array", "def")
+        self.basic_keywords = ("if", "ifelse", "for", "array", "def", "print")
         self.draw = ("moveto", "lineto")
         self.data_types = ("int", "float")
         self.ex = "executable_array"

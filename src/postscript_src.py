@@ -1,3 +1,4 @@
+import turtle
 from src import Errno
 from src.lexer import Lexer
 
@@ -15,7 +16,6 @@ class PS:
             'div': self.op_div,
             'mod': self.op_mod,
             'neg': self.op_neg,
-
 
             # stack
             'dup': self.stack_dup,
@@ -45,12 +45,19 @@ class PS:
 
             'def': self.define,
             'access_op': self.access_op,
+
+            # Built-in functions
+            'print': self.built_print,
+
         }
 
         self.draw_words = {
             'moveto': self.draw_moveto,
             'lineto': self.draw_lineto
         }
+
+        self.pen = None
+        self.drawing_window = None
 
     @Errno.ErrorTrace
     def execute(self, code):
@@ -69,6 +76,8 @@ class PS:
             elif type_ == "access_op":
                 self.stack.append(word)
                 self.access_op()
+            elif type_ == "draw" and self.pen is not None:
+                self.draw_words[word]()
             elif type_ == "var":
                 if self.words[word] is None:
                     self.stack.append(word)
@@ -188,8 +197,6 @@ class PS:
         op2 = self.stack.pop()
         self.stack.append(op1 ^ op2)
 
-
-
     def core_if(self):
         self.stack.pop()
         code = self.create_execute_array()
@@ -293,20 +300,41 @@ class PS:
             token = self.stack.pop()
         return array
 
+    def built_print(self):
+        args = self.stack.pop()
+        if type(args) != int:
+            raise Errno.InvalidFuncArgs
+        res = []
+        for _ in range(args):
+            res.append(self.stack.pop())
+        res.reverse()
+        print(*res)
+
+    # Drawing part implementation
     def draw(self):
-        pass
+        self.drawing_window = turtle.Screen()
+        self.drawing_window.title("PostScript")
+
+    def start_drawing(self):
+        self.pen = turtle.Turtle()
+
+    def end_drawing(self):
+        turtle.mainloop()
 
     def draw_moveto(self):
-        # TODO lift the pen and move to a point
-        pass
+        self.pen.up()
+        y = self.stack.pop()
+        x = self.stack.pop()
+        self.pen.goto(x, y)
 
     def draw_lineto(self):
-        # TODO lower the pen and move to a point
-        pass
+        self.pen.down()
+        y = self.stack.pop()
+        x = self.stack.pop()
+        self.pen.goto(x, y)
 
 
 if __name__ == '__main__':
-    import Errno
     source = '5 dup 1 add 2 div mul'
     ps = PS()
     l = Lexer()
@@ -314,5 +342,3 @@ if __name__ == '__main__':
     print(ast)
     ps.execute(ast)
     print(ps.stack)
-
-
