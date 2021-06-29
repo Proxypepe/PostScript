@@ -112,6 +112,10 @@ class PS:
         self.stack.append(result)
 
     def op_add(self):
+        """
+
+        :return: None
+        """
         _operand1 = self.stack.pop()
         _operand2 = self.stack.pop()
         _result = _operand1 + _operand2
